@@ -1,0 +1,142 @@
+import 'package:flutter/material.dart';
+
+// Classe modelo para representar um contato
+class Contact {
+  final String name;
+  final String phoneNumber;
+  final String imageUrl; // URL da imagem do contato
+  bool isFavorite; // Indica se o contato está nos favoritos
+
+  Contact({
+    required this.name,
+    required this.phoneNumber,
+    required this.imageUrl,
+    this.isFavorite = false, // Por padrão, o contato não é favorito
+  });
+}
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Contatos Favoritos',
+      theme: ThemeData(
+        primarySwatch: Colors.lightGreen,
+      ),
+      home: ContactListScreen(),
+    );
+  }
+}
+
+class ContactListScreen extends StatefulWidget {
+  @override
+  _ContactListScreenState createState() => _ContactListScreenState();
+}
+
+class _ContactListScreenState extends State<ContactListScreen> {
+  // Lista de contatos
+  List<Contact> contacts = [
+    Contact(
+      name: 'Rodisney', // Nome do cachorro
+      phoneNumber: '(11) 91211-2141',
+      imageUrl:
+          'https://i0.wp.com/omeudiadia.com.br/wp-content/uploads/2022/07/9c1f4ebb791500488b6389c05e830dfd.jpg?resize=736%2C736&ssl=1', // Link da imagem
+    ),
+    Contact(
+      name: 'Leonardo Da Vinci', // Nome do cachorro
+      phoneNumber: '(98) 7653-4321',
+      imageUrl:
+          'https://i0.wp.com/omeudiadia.com.br/wp-content/uploads/2022/07/57015df8f2411d1a7ddb143a0e8403d6.jpg?w=605&ssl=1', // Link da imagem
+    ),
+    Contact(
+      name: 'Maxwell Schlomer', // Nome do cachorro
+      phoneNumber: '(13) 92131-3142',
+      imageUrl:
+          'https://i0.wp.com/omeudiadia.com.br/wp-content/uploads/2022/07/e4bd7b10d7c29164c4bf22ebf3912408.jpg?w=736&ssl=1', // Link da imagem
+    ),
+    Contact(
+      name: 'Roberto Lee', // Nome do cachorro
+      phoneNumber: '(12) 92312-1359',
+      imageUrl:
+          'https://i0.wp.com/omeudiadia.com.br/wp-content/uploads/2022/07/ca4bb66c27d8a1dafafb36b9e8857ab5.jpg?w=551&ssl=1', // Link da imagem
+    ),
+    Contact(
+      name: 'Vanderley', // Nome do cachorro
+      phoneNumber: '(87) 82313-1947',
+      imageUrl:
+          'https://i0.wp.com/omeudiadia.com.br/wp-content/uploads/2022/07/c26277cad64ba340f71c7ce3526dac50.jpg?w=576&ssl=1', // Link da imagem
+    ),
+  ];
+
+  // Função para alternar o estado de favorito de um contato
+  void toggleFavorite(int index) {
+    setState(() {
+      contacts[index].isFavorite = !contacts[index].isFavorite;
+    });
+  }
+
+  // Função para contar contatos favoritos
+  int countFavorites() {
+    return contacts.where((contact) => contact.isFavorite).length;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Lista de Contatos'),
+      ),
+      body: ListView.builder(
+        itemCount: contacts.length,
+        itemBuilder: (context, index) {
+          return ListTile(
+            leading: CircleAvatar(
+              backgroundImage: NetworkImage(
+                  contacts[index].imageUrl), // Exibe a imagem do contato
+            ),
+            title: Text(contacts[index].name), // Exibe o nome do contato
+            subtitle: Text(contacts[index]
+                .phoneNumber), // Exibe o número de telefone do contato
+            trailing: IconButton(
+              icon: Icon(
+                contacts[index].isFavorite
+                    ? Icons.favorite
+                    : Icons.favorite_border,
+                color: contacts[index].isFavorite ? Colors.red : null,
+              ),
+              onPressed: () => toggleFavorite(
+                  index), // Adiciona ou remove o contato dos favoritos
+            ),
+          );
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text('Contatos Favoritos'),
+                content: Text(
+                    'Voce favoritou um total de: ${countFavorites()} contatos'), // Exibe o número de contatos favoritos
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('Fechar'),
+                  ),
+                ],
+              );
+            },
+          );
+        },
+        child: Icon(Icons.info),
+      ),
+    );
+  }
+}
